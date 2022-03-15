@@ -1,0 +1,46 @@
+
+
+.component-container {
+    position: relative;
+}
+
+.component-input {
+    width: 100%;
+    outline: none;
+    border-radius: 4px;
+    border: 1px solid lightgray;
+    padding: 12px;
+    box-sizing: border-box;
+}
+
+.component-input:focus {
+    border-color: black
+}
+
+.component-popup {
+    background: white;
+    border-radius: 5px;
+    position: absolute;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 -3px 18px rgba(0, 0, 0, 0.07);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+.component-list-item {
+    background: white;
+    color: black;
+    font-size: 16px;
+    padding: 12px;
+}
+
+.component-list-item-selected {
+    background: lightgrey;
+}
