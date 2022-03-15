@@ -16,6 +16,7 @@ const AutoCompleteListItem = (props : AutoCompleteListItemProps) => {
 
     return (
         //TODO: use pseudo class. which one?
+        //TODO: onMouseDown => onClick + regain focus on input
         <li className={"component-list-item" + (props.selected ? " component-list-item-selected" : "")} onMouseDown={props.onClick}>
             {props.value.substring(0,highlightAt)}<b>{props.value.substring(highlightAt,highlightAt+props.highlighted.length)}</b>{props.value.substring(highlightAt+ props.highlighted.length)}
         </li>
@@ -56,6 +57,9 @@ const AutoComplete = (props: AutoCompleteProps) => {
 
     useEffect(() => {
         const handleSpaceChanged = () => {
+            //TODO: decide good place for setMaxElements here. currently it is still possible to scroll popup out of
+            // visibility. Unfortunately, changing maxElements when window scroll looks VERY weird
+
             if(inputRef.current) {
                 const spaceAvailableTop = inputRef.current.getBoundingClientRect().y
                 const spaceAvailableBottom = window.innerHeight - (inputRef.current.getBoundingClientRect().y + inputRef.current.getBoundingClientRect().height)
@@ -102,18 +106,37 @@ const AutoComplete = (props: AutoCompleteProps) => {
         const spaceAvailableBottom = window.innerHeight - (inputRef.current.getBoundingClientRect().y + inputRef.current.getBoundingClientRect().height)
 
         setCurrentChoice(-1)
-        //TODO: hardcoded 40 is not good at all
+        //TODO: 40 => getComputedStyle
+        //TODO: many multiline elements may cause list out of screen
         setMaxElements(Math.floor(0.8 * Math.max(spaceAvailableBottom, spaceAvailableTop) / 40))
         setPopupCanceled(false)
         setChoices([])
         setQuery(s)
+        //TODO: useState+useEffect => useReducer (5 renders here instead of 1)
         if (s.length > 0) {
             fetch(s).then(choices => {
                 if (!canceled) {
                     setChoices(choices)
                 }
+            }).catch(reason => {
+                console.log(reason)
             })
         }
+
+        //TODO: alternative solution for cancellation outdated requests (if migrate to useReducer)
+        /*
+        fetch(query).then(choices => {
+                if (query === inputRef.current?.value) {
+                    setChoices(choices)
+                } else {
+                    console.log("query changed. skipping")
+                }
+            }).catch(reason => {
+                console.log(reason)
+            })
+         */
+
+
         return () => {canceled = true}
     },[query,fetch])
 
